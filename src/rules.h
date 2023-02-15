@@ -15,7 +15,9 @@ enum chains_t
 {
     INPUT,
     OUTPUT,
-    FORWARD
+    FORWARD,
+    PREROUTING,
+    POSTROUTING
 };
 
 
@@ -24,9 +26,6 @@ enum rule_t
     ACCEPT,
     DROP,
     QUEUE,
-    PREROUTING,
-    POSTROUTING,
-    OUTPUT,
     RETURN
 };
 
