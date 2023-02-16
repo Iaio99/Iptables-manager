@@ -10,6 +10,10 @@ add_executable(nc-iptables
         src/rules.c
 	    src/ui.c
         src/ui.h
+        src/utils/io.c
+        src/utils/io.h
+        src/utils/parsing.c
+        src/utils/parsing.h
 )
 
 

@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "rules.h"
-#include "utils.h"
+#include "utils/parsing.h"
 
 
 static const char *get_table(table_t table)

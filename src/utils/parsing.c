@@ -1,15 +1,8 @@
 #include <stdarg.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "utils.h"
-
-void error(char *message, int error_code)
-{
-    perror(message);
-    exit(error_code);
-}
+#include "parsing.h"
 
 
 char *init_string(char flag, const char *parameter)
