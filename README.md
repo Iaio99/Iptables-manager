@@ -1,2 +1,2 @@
 # Iptables-nc
-A simple interface written in ncurses for iptables
+A simple manager written in python for iptables.
