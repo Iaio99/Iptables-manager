@@ -1,75 +1,36 @@
 import os
+import utils
 
 
-class Table:
-    def __init__(self, table: str):
-        self.__table = table.upper()
-        tables = ["FILTER", "NAT", "MANGLE", "RAW", "SECURITY"]
-
-        if self.__table not in tables:
-            raise ValueError("The table must be one of %r." % tables)
-        
-        self.__flag = "-t"
-
-    def __str__(self):
-        return f"{self.__flag} {self.__table}"
+parametrize = lambda x, y: str(x + y if x else "")
 
 
-class Chain:
-    def __init__(self, chain: str, flag: str):
-        self.__chain = chain.upper()
-        self.__flag = flag.upper()
+def do_rule(n="", table="", chain="", chain_flag="", target="", ipv6: bool=False):
+    if chain is not "":
+        utils.check_chain(chain, chain_flag)
+    
+    if table is not "":
+        utils.check_table(table)
 
-        chains = ["OUTPUT", "FORWARD", "INPUT", "POSTROUTING", "PREROUTING"]
-        flags = ["A", "C", "D", "V", "I", "R", "S", "F", "L", "Z", "X", "P"]
+    if target is not "":
+        utils.check_target(target)
 
-        if self.__chain not in chains:
-            raise ValueError("The table must be one of %r." % chains)
+    rule = f"{parametrize(table, '-t')}"
 
-        if self.__flag not in flags:
-            raise ValueError("The table must be one of %r." % flags)
-        
+    e = os.system(f"iptables {rule}")
+    if ipv6:
+        e = os.system(f"ip6tables {rule}")
 
-    def __str__(self):
-        return f"-{self.__flag} {self.__chain}"
-
-
-class Target:
-    def __init__(self, target: str):
-        self.__target = target.upper()
-        self.__flag = "-j"
-
-        targets = ["ACCEPT", "DROP", "QUEUE", "RETURN", "PREROUTING"]
-
-        if self.__target not in targets:
-            raise ValueError("The table must be one of %r." % targets)
-        
-    def __str__(self):
-        return f"{self.__flag} {self.__target}"
+    return e
 
 
-class Interface:
-    pass
-
-
-class Address:
-    pass
-
-
-class Rule:
-    def __init__(self, chain, target, table=None, port=None, protocol=None, src=None, dst=None, in_interface=None, out_interface=None):
-        self.__table = Table(table)
-        self.__chain = Chain(chain, "A")
-        self.__target = Target(target)
-        self.__port = port
-        self.__protocol = protocol
-        self.__src = src
-        self.__dst = dst
-        self.__in_interface = in_interface
-        self.__out_interface = out_interface
-
-    def __str__(self):
-        return f"iptables {str(self.__table)} {str(self.__chain)} {str(self.__port or '')} {str(self.__protocol or '')} {str(self.__src or '')} {str(self.__dst or '')} {str(self.__in_interface or '')} {str(self.__out_interface or '')}"
-
-    def add_rule(self):
-        os.system(str(self))
+append_rule = lambda chain, table = "", target = "", ipv6 = False: do_rule(chain=chain, chain_flag="-A", table=table, target=target, ipv6=ipv6)
+check_rule = lambda chain, table = "", target = "", ipv6 = False: do_rule(chain=chain, chain_flag="-C", table=table, target=target, ipv6=ipv6)
+delete_rule = lambda chain, table = "", target = "", ipv6 = False: do_rule(chain=chain, chain_flag="-D", table=table, target=target, ipv6=ipv6)
+insert_rule = lambda chain, table = "", target = "", ipv6 = False: do_rule(chain=chain, chain_flag="-I", table=table, target=target, ipv6=ipv6)
+replace_rule = lambda chain, table = "", target = "", ipv6 = False: do_rule(chain=chain, chain_flag="-R", table=table, target=target, ipv6=ipv6)
+list_rules = lambda chain="", ipv6 = False: do_rule(chain=chain, chain_flag="-L", ipv6=ipv6)
+print_rules = lambda chain="", ipv6 = False: do_rule(chain=chain, chain_flag="-S", ipv6=ipv6)
+flush_rules = lambda table="", chain="", ipv6 = False: do_rule(table=table, chain=chain, chain_flag="-F", ipv6=ipv6)
+delete_chain = lambda table="", chain="", ipv6 = False: do_rule(table=table, chain=chain, chain_flag="-X", ipv6=ipv6)
+new_chain = lambda chain, table="", ipv6 = False: do_rule(table=table, chain=chain, chain_flag="-N", ipv6=ipv6)

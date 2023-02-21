@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from rule import Rule
+#from rule import Rule
 
 
 def main():
